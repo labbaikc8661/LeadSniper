@@ -1,0 +1,11 @@
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+// Graceful fallback during build time when env vars aren't available
+export const supabase: SupabaseClient = supabaseUrl
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : (new Proxy({}, {
+      get: () => () => ({ data: null, error: { message: 'Supabase not configured' } }),
+    }) as unknown as SupabaseClient);
