@@ -94,6 +94,7 @@ async function runWatchMode(intervalSec) {
             .from('ms_search_requests')
             .update({
               status: 'completed',
+              completed_at: new Date().toISOString(),
               search_id: latestSearch?.id || null,
             })
             .eq('id', req.id);

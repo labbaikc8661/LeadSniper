@@ -74,9 +74,44 @@ export async function getAllConfig() {
     'user_website',
   ];
 
+  const envMap = {
+    google_places_api_key_1: 'GOOGLE_PLACES_API_KEY_1',
+    google_places_api_key_2: 'GOOGLE_PLACES_API_KEY_2',
+    gemini_api_key: 'GEMINI_API_KEY',
+    gemini_model: 'GEMINI_MODEL',
+    scraper_delay_min: 'SCRAPER_DELAY_MIN',
+    scraper_delay_max: 'SCRAPER_DELAY_MAX',
+    scraper_max_results: 'SCRAPER_MAX_RESULTS',
+    user_name: 'USER_NAME',
+    user_title: 'USER_TITLE',
+    user_email: 'USER_EMAIL',
+    user_website: 'USER_WEBSITE',
+  };
+
+  // First pass: grab everything available from .env
   const config = {};
+  const missingKeys = [];
   for (const key of keys) {
-    config[key] = await getConfig(key);
+    const envKey = envMap[key];
+    if (envKey && process.env[envKey]) {
+      config[key] = process.env[envKey];
+    } else {
+      missingKeys.push(key);
+    }
+  }
+
+  // Single batch query for anything not in .env
+  if (missingKeys.length > 0) {
+    const { data } = await supabase
+      .from('ms_settings')
+      .select('key, value')
+      .in('key', missingKeys);
+
+    if (data) {
+      for (const row of data) {
+        config[row.key] = row.value;
+      }
+    }
   }
 
   // Defaults

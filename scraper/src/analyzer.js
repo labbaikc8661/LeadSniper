@@ -36,10 +36,10 @@ export async function analyzeWebsite(url) {
     apiUrl.searchParams.set('url', url);
     apiUrl.searchParams.set('strategy', 'mobile');
     // Request multiple categories for more data
-    apiUrl.searchParams.set('category', 'performance');
-    apiUrl.searchParams.set('category', 'accessibility');
-    apiUrl.searchParams.set('category', 'seo');
-    apiUrl.searchParams.set('category', 'best-practices');
+    apiUrl.searchParams.append('category', 'performance');
+    apiUrl.searchParams.append('category', 'accessibility');
+    apiUrl.searchParams.append('category', 'seo');
+    apiUrl.searchParams.append('category', 'best-practices');
 
     const response = await fetch(apiUrl.toString(), { signal: AbortSignal.timeout(45000) });
     const data = await response.json();
