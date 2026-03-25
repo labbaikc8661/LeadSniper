@@ -88,7 +88,7 @@ export default function PipelinePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: colIndex * 0.05 }}
-                className="min-w-[280px] w-[280px] flex-shrink-0"
+                className="min-w-[280px] w-[280px] flex-shrink-0 flex flex-col"
               >
                 {/* Column header */}
                 <div className="flex items-center gap-2 mb-3 px-1">
@@ -113,7 +113,7 @@ export default function PipelinePage() {
                     <div
                       ref={provided.innerRef}
                       {...provided.droppableProps}
-                      className="space-y-2 p-2 rounded-2xl transition-colors duration-200 min-h-[200px]"
+                      className="space-y-2 p-2 rounded-2xl transition-colors duration-200 min-h-[400px] flex-1"
                       style={{
                         background: snapshot.isDraggingOver
                           ? 'var(--bg-hover)'

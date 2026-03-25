@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Bell, RefreshCw } from 'lucide-react';
+import { Search, RefreshCw } from 'lucide-react';
 
 export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,16 +43,6 @@ export default function Navbar() {
           onClick={() => window.dispatchEvent(new Event('ms-data-refresh'))}
         >
           <RefreshCw size={16} style={{ color: 'var(--text-secondary)' }} />
-        </button>
-        <button
-          className="relative p-2.5 rounded-xl transition-all duration-200 hover:scale-105"
-          style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}
-        >
-          <Bell size={16} style={{ color: 'var(--text-secondary)' }} />
-          <span
-            className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full"
-            style={{ background: 'var(--accent-red)' }}
-          />
         </button>
       </div>
     </header>
