@@ -59,139 +59,172 @@ export function calculateOpportunityScore(lead, niche = '') {
   const services = [];
   const nicheLower = niche.toLowerCase();
 
+  // ── No website = max points for ALL web-related factors ──
+  // They need everything: site, speed, mobile, SEO, SSL, etc.
+  const noSite = !lead.has_website;
+
   // 1. Website existence (0-8)
-  if (!lead.has_website) {
+  if (noSite) {
     breakdown.website_existence = 8;
     services.push('website');
   } else {
-    // Has website but check quality signals
     const hasMinimalSite = (lead.tech_stack || []).some(t => ['Wix', 'Squarespace'].includes(t));
     breakdown.website_existence = hasMinimalSite ? 4 : 0;
   }
 
-  // 2. Desktop speed (0-6) - lower PageSpeed = higher opportunity
-  if (lead.page_speed_score !== null && lead.page_speed_score !== undefined) {
+  // 2. Desktop speed (0-6)
+  if (noSite) {
+    breakdown.desktop_speed = 6;
+  } else if (lead.page_speed_score !== null && lead.page_speed_score !== undefined) {
     if (lead.page_speed_score < 30) breakdown.desktop_speed = 6;
     else if (lead.page_speed_score < 50) breakdown.desktop_speed = 5;
     else if (lead.page_speed_score < 70) breakdown.desktop_speed = 3;
     else if (lead.page_speed_score < 90) breakdown.desktop_speed = 1;
     else breakdown.desktop_speed = 0;
   } else {
-    breakdown.desktop_speed = lead.has_website ? 3 : 0; // unknown = assume mediocre
+    breakdown.desktop_speed = 3; // has website but unknown = assume mediocre
   }
 
   // 3. Mobile speed (0-7)
-  if (lead.mobile_friendly === false) {
+  if (noSite) {
+    breakdown.mobile_speed = 7;
+  } else if (lead.mobile_friendly === false) {
     breakdown.mobile_speed = 7;
   } else if (lead.page_speed_score !== null) {
-    // Mobile is usually worse than desktop
     const mobileEstimate = Math.max(0, (lead.page_speed_score || 0) - 15);
     if (mobileEstimate < 30) breakdown.mobile_speed = 7;
     else if (mobileEstimate < 50) breakdown.mobile_speed = 5;
     else if (mobileEstimate < 70) breakdown.mobile_speed = 3;
     else breakdown.mobile_speed = 1;
   } else {
-    breakdown.mobile_speed = lead.has_website ? 3 : 0;
+    breakdown.mobile_speed = 3;
   }
 
-  // 4. FCP - First Contentful Paint (0-4)
-  if (lead.fcp_ms !== null && lead.fcp_ms !== undefined) {
+  // 4. FCP (0-4)
+  if (noSite) {
+    breakdown.fcp = 4;
+  } else if (lead.fcp_ms !== null && lead.fcp_ms !== undefined) {
     if (lead.fcp_ms > 4000) breakdown.fcp = 4;
     else if (lead.fcp_ms > 2500) breakdown.fcp = 3;
     else if (lead.fcp_ms > 1800) breakdown.fcp = 2;
     else if (lead.fcp_ms > 1000) breakdown.fcp = 1;
     else breakdown.fcp = 0;
   } else {
-    breakdown.fcp = lead.has_website ? 2 : 0;
+    breakdown.fcp = 2;
   }
 
-  // 5. LCP - Largest Contentful Paint (0-4)
-  if (lead.lcp_ms !== null && lead.lcp_ms !== undefined) {
+  // 5. LCP (0-4)
+  if (noSite) {
+    breakdown.lcp = 4;
+  } else if (lead.lcp_ms !== null && lead.lcp_ms !== undefined) {
     if (lead.lcp_ms > 6000) breakdown.lcp = 4;
     else if (lead.lcp_ms > 4000) breakdown.lcp = 3;
     else if (lead.lcp_ms > 2500) breakdown.lcp = 2;
     else if (lead.lcp_ms > 1500) breakdown.lcp = 1;
     else breakdown.lcp = 0;
   } else {
-    breakdown.lcp = lead.has_website ? 2 : 0;
+    breakdown.lcp = 2;
   }
 
-  // 6. CLS - Cumulative Layout Shift (0-3)
-  if (lead.cls_score !== null && lead.cls_score !== undefined) {
+  // 6. CLS (0-3)
+  if (noSite) {
+    breakdown.cls = 3;
+  } else if (lead.cls_score !== null && lead.cls_score !== undefined) {
     if (lead.cls_score > 0.25) breakdown.cls = 3;
     else if (lead.cls_score > 0.1) breakdown.cls = 2;
     else if (lead.cls_score > 0.05) breakdown.cls = 1;
     else breakdown.cls = 0;
   } else {
-    breakdown.cls = lead.has_website ? 1 : 0;
+    breakdown.cls = 1;
   }
 
-  // 7. TTI - Time to Interactive (0-4)
-  if (lead.tti_ms !== null && lead.tti_ms !== undefined) {
+  // 7. TTI (0-4)
+  if (noSite) {
+    breakdown.tti = 4;
+  } else if (lead.tti_ms !== null && lead.tti_ms !== undefined) {
     if (lead.tti_ms > 7000) breakdown.tti = 4;
     else if (lead.tti_ms > 5000) breakdown.tti = 3;
     else if (lead.tti_ms > 3500) breakdown.tti = 2;
     else if (lead.tti_ms > 2000) breakdown.tti = 1;
     else breakdown.tti = 0;
   } else {
-    breakdown.tti = lead.has_website ? 2 : 0;
+    breakdown.tti = 2;
   }
 
   // 8. Tech stack freshness (0-5)
   const techStack = lead.tech_stack || [];
   const hasOutdated = techStack.some(t => OUTDATED_TECH.has(t));
   const hasModern = techStack.some(t => MODERN_TECH.has(t));
-  if (hasOutdated && !hasModern) breakdown.tech_freshness = 5;
-  else if (hasOutdated && hasModern) breakdown.tech_freshness = 3;
-  else if (!hasModern && lead.has_website) breakdown.tech_freshness = 2;
-  else breakdown.tech_freshness = 0;
+  if (noSite) {
+    breakdown.tech_freshness = 5;
+  } else if (hasOutdated && !hasModern) {
+    breakdown.tech_freshness = 5;
+  } else if (hasOutdated && hasModern) {
+    breakdown.tech_freshness = 3;
+  } else if (!hasModern) {
+    breakdown.tech_freshness = 2;
+  } else {
+    breakdown.tech_freshness = 0;
+  }
   if (hasOutdated) services.push('website');
 
   // 9. SSL (0-2)
-  if (lead.has_ssl === false) {
+  if (noSite) {
     breakdown.ssl = 2;
-  } else if (lead.has_ssl === null && lead.has_website) {
-    breakdown.ssl = 1; // unknown
+  } else if (lead.has_ssl === false) {
+    breakdown.ssl = 2;
+  } else if (lead.has_ssl === null) {
+    breakdown.ssl = 1;
   } else {
     breakdown.ssl = 0;
   }
 
   // 10. Mobile responsive (0-5)
-  if (lead.has_viewport_meta === false || lead.mobile_friendly === false) {
+  if (noSite) {
     breakdown.mobile_responsive = 5;
     services.push('website');
-  } else if (lead.mobile_friendly === null && lead.has_website) {
+  } else if (lead.has_viewport_meta === false || lead.mobile_friendly === false) {
+    breakdown.mobile_responsive = 5;
+    services.push('website');
+  } else if (lead.mobile_friendly === null) {
     breakdown.mobile_responsive = 2;
   } else {
     breakdown.mobile_responsive = 0;
   }
 
   // 11. Accessibility (0-4)
-  if (lead.has_alt_tags === false) {
+  if (noSite) {
+    breakdown.accessibility = 4;
+  } else if (lead.has_alt_tags === false) {
     breakdown.accessibility = 3;
-  } else if (lead.has_alt_tags === null && lead.has_website) {
+  } else if (lead.has_alt_tags === null) {
     breakdown.accessibility = 2;
   } else {
-    breakdown.accessibility = lead.has_website ? 1 : 0;
+    breakdown.accessibility = 1;
   }
 
   // 12. SEO basics (0-5)
-  let seoScore = 0;
-  if (lead.has_meta_description === false) seoScore += 2;
-  else if (lead.has_meta_description === null && lead.has_website) seoScore += 1;
-  if (lead.has_og_tags === false) seoScore += 2;
-  else if (lead.has_og_tags === null && lead.has_website) seoScore += 1;
-  if (!lead.has_website) seoScore = 0;
-  breakdown.seo_basics = Math.min(seoScore, 5);
+  if (noSite) {
+    breakdown.seo_basics = 5;
+  } else {
+    let seoScore = 0;
+    if (lead.has_meta_description === false) seoScore += 2;
+    else if (lead.has_meta_description === null) seoScore += 1;
+    if (lead.has_og_tags === false) seoScore += 2;
+    else if (lead.has_og_tags === null) seoScore += 1;
+    breakdown.seo_basics = Math.min(seoScore, 5);
+  }
 
   // 13. Image optimization (0-3)
-  if (lead.image_optimization_score !== null && lead.image_optimization_score !== undefined) {
+  if (noSite) {
+    breakdown.image_optimization = 3;
+  } else if (lead.image_optimization_score !== null && lead.image_optimization_score !== undefined) {
     if (lead.image_optimization_score < 30) breakdown.image_optimization = 3;
     else if (lead.image_optimization_score < 60) breakdown.image_optimization = 2;
     else if (lead.image_optimization_score < 85) breakdown.image_optimization = 1;
     else breakdown.image_optimization = 0;
   } else {
-    breakdown.image_optimization = lead.has_website ? 1 : 0;
+    breakdown.image_optimization = 1;
   }
 
   // 14. No mobile app (0-4)
@@ -229,8 +262,7 @@ export function calculateOpportunityScore(lead, niche = '') {
 
   // 17. Business health (0-5) - High rating + bad site = GOLD
   if (lead.rating && lead.rating >= 4.5 && lead.review_count > 20) {
-    // Great business
-    if (!lead.has_website || (lead.page_speed_score !== null && lead.page_speed_score < 50)) {
+    if (noSite || (lead.page_speed_score !== null && lead.page_speed_score < 50)) {
       breakdown.business_health = 5; // Jackpot
     } else if (lead.page_speed_score !== null && lead.page_speed_score < 80) {
       breakdown.business_health = 3;
@@ -238,9 +270,9 @@ export function calculateOpportunityScore(lead, niche = '') {
       breakdown.business_health = 1;
     }
   } else if (lead.rating && lead.rating >= 4.0) {
-    breakdown.business_health = lead.has_website ? 2 : 4;
+    breakdown.business_health = noSite ? 4 : 2;
   } else if (lead.rating && lead.rating >= 3.5) {
-    breakdown.business_health = 1;
+    breakdown.business_health = noSite ? 3 : 1;
   } else {
     breakdown.business_health = 0;
   }
@@ -269,7 +301,9 @@ export function calculateOpportunityScore(lead, niche = '') {
   }
 
   // 21. Content freshness (0-3)
-  if (lead.content_freshness_year !== null && lead.content_freshness_year !== undefined) {
+  if (noSite) {
+    breakdown.content_freshness = 3;
+  } else if (lead.content_freshness_year !== null && lead.content_freshness_year !== undefined) {
     const currentYear = new Date().getFullYear();
     const age = currentYear - lead.content_freshness_year;
     if (age >= 4) breakdown.content_freshness = 3;
@@ -277,22 +311,26 @@ export function calculateOpportunityScore(lead, niche = '') {
     else if (age >= 1) breakdown.content_freshness = 1;
     else breakdown.content_freshness = 0;
   } else {
-    breakdown.content_freshness = lead.has_website ? 1 : 0;
+    breakdown.content_freshness = 1;
   }
 
   // 22. Structured data (0-2)
-  if (lead.has_structured_data === false) {
+  if (noSite) {
     breakdown.structured_data = 2;
-  } else if (lead.has_structured_data === null && lead.has_website) {
+  } else if (lead.has_structured_data === false) {
+    breakdown.structured_data = 2;
+  } else if (lead.has_structured_data === null) {
     breakdown.structured_data = 1;
   } else {
     breakdown.structured_data = 0;
   }
 
   // 23. PWA capability (0-2)
-  if (lead.has_pwa === false && lead.has_website) {
+  if (noSite) {
     breakdown.pwa = 2;
-  } else if (lead.has_pwa === null && lead.has_website) {
+  } else if (lead.has_pwa === false) {
+    breakdown.pwa = 2;
+  } else if (lead.has_pwa === null) {
     breakdown.pwa = 1;
   } else {
     breakdown.pwa = 0;
