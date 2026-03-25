@@ -571,8 +571,8 @@ export default function LeadDetail({ lead, onUpdate }: LeadDetailProps) {
                       key={content}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="text-sm p-3 whitespace-pre-wrap overflow-y-auto"
-                      style={{ background: 'var(--bg-input)', color: 'var(--text-secondary)', lineHeight: 1.6, maxHeight: '240px' }}
+                      className="text-sm p-3 whitespace-pre-wrap"
+                      style={{ background: 'var(--bg-input)', color: 'var(--text-secondary)', lineHeight: 1.6 }}
                     >
                       {content}
                     </motion.div>
