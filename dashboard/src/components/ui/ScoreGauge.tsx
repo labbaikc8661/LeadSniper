@@ -7,9 +7,11 @@ interface ScoreGaugeProps {
   size?: number;
   strokeWidth?: number;
   label?: string;
+  /** If true, high score = good (green). If false, high score = bad (red). Default: true */
+  highIsGood?: boolean;
 }
 
-export default function ScoreGauge({ score, size = 64, strokeWidth = 5, label }: ScoreGaugeProps) {
+export default function ScoreGauge({ score, size = 64, strokeWidth = 5, label, highIsGood = true }: ScoreGaugeProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const value = score ?? 0;
@@ -17,9 +19,15 @@ export default function ScoreGauge({ score, size = 64, strokeWidth = 5, label }:
 
   const getColor = () => {
     if (score === null) return 'var(--text-muted)';
-    if (score >= 90) return 'var(--accent-green)';
-    if (score >= 50) return 'var(--accent-amber)';
-    return 'var(--accent-red)';
+    if (highIsGood) {
+      if (score >= 70) return 'var(--accent-green)';
+      if (score >= 40) return 'var(--accent-amber)';
+      return 'var(--accent-red)';
+    } else {
+      if (score >= 70) return 'var(--accent-red)';
+      if (score >= 40) return 'var(--accent-amber)';
+      return 'var(--accent-green)';
+    }
   };
 
   return (

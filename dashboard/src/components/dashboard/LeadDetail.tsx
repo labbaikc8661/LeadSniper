@@ -205,8 +205,11 @@ export default function LeadDetail({ lead, onUpdate }: LeadDetailProps) {
               </div>
 
               {/* Score gauge */}
-              <div className="flex justify-center py-2">
-                <ScoreGauge score={lead.opportunity_score} size={100} strokeWidth={8} label="Opportunity" />
+              <div className="flex flex-col items-center py-2 gap-1">
+                <ScoreGauge score={lead.opportunity_score} size={100} strokeWidth={8} label="Opportunity" highIsGood={true} />
+                <span className="text-[9px] font-medium" style={{ color: 'var(--text-muted)' }}>
+                  Higher = better chance to close
+                </span>
               </div>
 
               {/* Factor bars */}
@@ -372,38 +375,54 @@ export default function LeadDetail({ lead, onUpdate }: LeadDetailProps) {
       {/* Website Analysis */}
       <div className="space-y-2">
         <h4 className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>Website Analysis</h4>
-        <div className="grid grid-cols-3 gap-3">
-          <ScoreGauge score={lead.page_speed_score} label="Speed" />
-          <div className="flex flex-col items-center gap-1">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
-              style={{ background: 'var(--bg-input)', border: '1px solid var(--border-subtle)' }}>
-              <Smartphone size={20} style={{
-                color: lead.mobile_friendly === null ? 'var(--text-muted)' : lead.mobile_friendly ? 'var(--accent-green)' : 'var(--accent-red)',
-              }} />
+        {!lead.has_website ? (
+          <div className="flex items-center gap-3 p-4 rounded-xl" style={{ background: 'rgba(248, 113, 113, 0.08)', border: '1px solid rgba(248, 113, 113, 0.15)' }}>
+            <AlertTriangle size={18} style={{ color: 'var(--accent-red)' }} />
+            <div>
+              <p className="text-sm font-medium" style={{ color: 'var(--accent-red)' }}>No website found</p>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>This business has no web presence — strong pitch opportunity.</p>
             </div>
-            <span className="text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>Mobile</span>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
-              style={{ background: 'var(--bg-input)', border: '1px solid var(--border-subtle)' }}>
-              <Smartphone size={20} style={{
-                color: lead.has_mobile_app ? 'var(--accent-green)' : 'var(--accent-red)',
-              }} />
+        ) : (
+          <>
+            <div className="grid grid-cols-3 gap-3">
+              <ScoreGauge score={lead.page_speed_score} label="Speed" highIsGood={false} />
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
+                  style={{ background: 'var(--bg-input)' }}>
+                  <Smartphone size={20} style={{
+                    color: lead.mobile_friendly === null ? 'var(--text-muted)' : lead.mobile_friendly ? 'var(--accent-green)' : 'var(--accent-red)',
+                  }} />
+                </div>
+                <span className="text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>
+                  {lead.mobile_friendly === null ? 'Mobile' : lead.mobile_friendly ? 'Responsive' : 'Not Mobile'}
+                </span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center"
+                  style={{ background: 'var(--bg-input)' }}>
+                  <Smartphone size={20} style={{
+                    color: lead.has_mobile_app ? 'var(--accent-green)' : 'var(--accent-red)',
+                  }} />
+                </div>
+                <span className="text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>
+                  {lead.has_mobile_app ? 'Has App' : 'No App'}
+                </span>
+              </div>
             </div>
-            <span className="text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>App</span>
-          </div>
-        </div>
 
-        {lead.tech_stack.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-2">
-            <Code2 size={13} style={{ color: 'var(--text-muted)' }} />
-            {lead.tech_stack.map((tech, i) => (
-              <span key={i} className="text-[10px] font-medium px-2 py-0.5 rounded-md"
-                style={{ background: 'var(--bg-hover)', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)' }}>
-                {tech}
-              </span>
-            ))}
-          </div>
+            {lead.tech_stack.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                <Code2 size={13} style={{ color: 'var(--text-muted)' }} />
+                {lead.tech_stack.map((tech, i) => (
+                  <span key={i} className="text-[10px] font-medium px-2 py-0.5 rounded-md"
+                    style={{ background: 'var(--bg-hover)', color: 'var(--text-secondary)' }}>
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -544,8 +563,8 @@ export default function LeadDetail({ lead, onUpdate }: LeadDetailProps) {
                       key={content}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="text-sm p-3 whitespace-pre-wrap"
-                      style={{ background: 'var(--bg-input)', color: 'var(--text-secondary)', lineHeight: 1.6 }}
+                      className="text-sm p-3 whitespace-pre-wrap overflow-y-auto"
+                      style={{ background: 'var(--bg-input)', color: 'var(--text-secondary)', lineHeight: 1.6, maxHeight: '240px' }}
                     >
                       {content}
                     </motion.div>

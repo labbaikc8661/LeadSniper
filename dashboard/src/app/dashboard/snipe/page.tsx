@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Rocket, Search, Loader2, CheckCircle2, XCircle, Clock,
@@ -10,6 +11,7 @@ import { useSearchRequests, useSearchPresets, createSearchRequest, saveSearchPre
 import { timeAgo } from '@/lib/utils';
 
 export default function SnipePage() {
+  const router = useRouter();
   const { requests, loading: reqLoading } = useSearchRequests();
   const { presets, refetch: refetchPresets } = useSearchPresets();
   const [niche, setNiche] = useState('');
@@ -27,13 +29,16 @@ export default function SnipePage() {
     e.preventDefault();
     if (!niche.trim() || !city.trim()) return;
     setSubmitting(true);
-    await createSearchRequest(niche.trim(), city.trim(), {
+    const { error } = await createSearchRequest(niche.trim(), city.trim(), {
       maxResults,
       skipCrawl,
       skipAnalysis,
       skipAi,
     });
     setSubmitting(false);
+    if (!error) {
+      router.push('/dashboard/leads');
+    }
   };
 
   const handleLoadPreset = (preset: typeof presets[0]) => {

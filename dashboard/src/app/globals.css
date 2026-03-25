@@ -87,13 +87,6 @@ body {
     background: var(--bg-card);
     border: 1px solid var(--border-subtle);
     border-radius: 1rem;
-    transition: all 0.2s ease;
-  }
-
-  .surface-card:hover {
-    background: var(--bg-elevated);
-    border-color: var(--border-medium);
-    box-shadow: 0 8px 32px var(--shadow-color);
   }
 
   .surface-elevated {
@@ -212,6 +205,23 @@ body {
   .score-ring circle {
     transition: stroke-dashoffset 0.6s ease;
   }
+}
+
+/* Remove default focus outlines globally — use custom focus styles instead */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 /* Selection */

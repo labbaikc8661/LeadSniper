@@ -31,17 +31,41 @@ export function useLeads(filters?: { status?: LeadStatus; searchId?: string }) {
     return () => window.removeEventListener('ms-data-refresh', handler);
   }, [fetchLeads]);
 
-  // Real-time subscription
+  // Real-time subscription - stream individual changes instead of refetching all
   useEffect(() => {
     const channel = supabase
-      .channel('ms_leads_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'ms_leads' }, () => {
-        fetchLeads();
+      .channel('ms_leads_realtime')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'ms_leads' }, async (payload) => {
+        // Fetch the full lead with joined search data
+        const { data } = await supabase
+          .from('ms_leads')
+          .select('*, search:ms_searches(*)')
+          .eq('id', payload.new.id)
+          .single();
+        if (data) {
+          setLeads(prev => {
+            if (prev.some(l => l.id === data.id)) return prev;
+            return [data as Lead, ...prev];
+          });
+        }
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'ms_leads' }, async (payload) => {
+        const { data } = await supabase
+          .from('ms_leads')
+          .select('*, search:ms_searches(*)')
+          .eq('id', payload.new.id)
+          .single();
+        if (data) {
+          setLeads(prev => prev.map(l => l.id === data.id ? data as Lead : l));
+        }
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'ms_leads' }, (payload) => {
+        setLeads(prev => prev.filter(l => l.id !== payload.old.id));
       })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [fetchLeads]);
+  }, []);
 
   return { leads, loading, refetch: fetchLeads };
 }

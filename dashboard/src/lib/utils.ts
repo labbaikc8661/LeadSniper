@@ -49,15 +49,17 @@ export function getEmailLink(email: string, subject?: string, body?: string): st
 
 export function getSpeedScoreColor(score: number | null): string {
   if (score === null) return 'var(--text-muted)';
-  if (score >= 90) return 'var(--accent-green)';
-  if (score >= 50) return 'var(--accent-amber)';
+  // Low speed = red (their site is slow = opportunity for you)
+  // High speed = green (their site is fast = less opportunity)
+  if (score >= 70) return 'var(--accent-green)';
+  if (score >= 40) return 'var(--accent-amber)';
   return 'var(--accent-red)';
 }
 
 export function getSpeedScoreLabel(score: number | null): string {
   if (score === null) return 'N/A';
-  if (score >= 90) return 'Fast';
-  if (score >= 50) return 'Average';
+  if (score >= 70) return 'Fast';
+  if (score >= 40) return 'Average';
   return 'Slow';
 }
 
