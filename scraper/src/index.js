@@ -33,7 +33,65 @@ program
     await runWatchMode(options.interval || 30);
   });
 
+// ── Re-score all existing leads ──
+program
+  .command('rescore')
+  .description('Re-calculate opportunity scores for all existing leads using the latest scoring logic')
+  .action(async () => {
+    await runRescore();
+  });
+
 program.parse();
+
+// ── Rescore ──
+async function runRescore() {
+  const spinner = ora('Fetching all leads...').start();
+
+  // Fetch all leads with their search niche
+  const { data: leads, error } = await supabase
+    .from('ms_leads')
+    .select('*, search:ms_searches(niche)');
+
+  if (error) {
+    spinner.fail(`Failed to fetch leads: ${error.message}`);
+    process.exit(1);
+  }
+
+  spinner.succeed(`Found ${leads.length} leads to re-score`);
+
+  let updated = 0;
+  let errors = 0;
+
+  for (const lead of leads) {
+    const niche = lead.search?.niche || '';
+    const rescored = scoreAndAnalyze({ ...lead }, niche);
+
+    const { error: updateError } = await supabase
+      .from('ms_leads')
+      .update({
+        opportunity_score: rescored.opportunity_score,
+        score_breakdown: rescored.score_breakdown,
+        service_opportunities: rescored.service_opportunities,
+        pitch_angles: rescored.pitch_angles,
+        pitch_summary: rescored.pitch_summary,
+      })
+      .eq('id', lead.id);
+
+    if (updateError) {
+      errors++;
+    } else {
+      updated++;
+    }
+
+    // Log progress every 10 leads
+    if ((updated + errors) % 10 === 0) {
+      process.stdout.write(`\r  Re-scored ${updated + errors}/${leads.length} leads...`);
+    }
+  }
+
+  console.log(`\n${chalk.green(`Done! Re-scored ${updated} leads.`)}${errors > 0 ? chalk.red(` ${errors} errors.`) : ''}`);
+  process.exit(0);
+}
 
 // ── Watch Mode ──
 async function runWatchMode(intervalSec) {
