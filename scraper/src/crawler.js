@@ -92,6 +92,16 @@ export async function crawlWebsite(url, config) {
   const page = await context.newPage();
   page.setDefaultTimeout(30000); // Increased timeout for slower sites
 
+  // Block images, fonts, media, and stylesheets to save RAM and speed up crawling
+  await page.route('**/*', (route) => {
+    const type = route.request().resourceType();
+    if (['image', 'media', 'font', 'stylesheet'].includes(type)) {
+      route.abort();
+    } else {
+      route.continue();
+    }
+  });
+
   // Collect all page content for analysis
   let allContent = '';
 
@@ -135,6 +145,7 @@ export async function crawlWebsite(url, config) {
       .filter((e) => !JUNK_EMAILS.has(e.toLowerCase()))
       .filter((e) => !e.endsWith('.png') && !e.endsWith('.jpg') && !e.endsWith('.svg'))
       .filter((e) => !e.includes('example') && !e.includes('test@'))
+      .filter((e) => !/^(noreply|no-reply|no_reply|donotreply|sentry)@/i.test(e))
       .slice(0, 5);
 
     // Extract social links
