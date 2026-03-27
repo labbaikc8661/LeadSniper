@@ -207,6 +207,12 @@ body {
   }
 }
 
+/* Kill Recharts tooltip/wrapper white backgrounds */
+.recharts-tooltip-wrapper {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* Remove default focus outlines globally — use custom focus styles instead */
 *:focus {
   outline: none;

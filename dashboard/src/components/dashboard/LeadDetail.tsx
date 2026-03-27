@@ -477,8 +477,8 @@ export default function LeadDetail({ lead, onUpdate }: LeadDetailProps) {
               if (!content && !hasAny) return null;
 
               return (
-                <div key={ch.key} className="rounded-xl overflow-hidden" style={{ border: `1px solid ${ch.color}20` }}>
-                  <div className="flex items-center justify-between px-3 py-2" style={{ background: `${ch.color}10` }}>
+                <div key={ch.key} className="rounded-xl" style={{ border: `1px solid ${ch.color}20` }}>
+                  <div className="flex items-center justify-between px-3 py-2 rounded-t-xl" style={{ background: `${ch.color}10` }}>
                     <div className="flex items-center gap-2">
                       <span style={{ color: ch.color }}>{ch.icon}</span>
                       <span className="text-xs font-semibold" style={{ color: ch.color }}>{ch.label}</span>
@@ -567,15 +567,12 @@ export default function LeadDetail({ lead, onUpdate }: LeadDetailProps) {
 
                   {/* Message content */}
                   {content ? (
-                    <motion.div
-                      key={content}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="text-sm p-3 whitespace-pre-wrap"
-                      style={{ background: 'var(--bg-input)', color: 'var(--text-secondary)', lineHeight: 1.6 }}
+                    <div
+                      className="text-sm p-3 whitespace-pre-wrap select-all"
+                      style={{ background: 'var(--bg-input)', color: 'var(--text-secondary)', lineHeight: 1.6, overflow: 'visible', maxHeight: 'none' }}
                     >
                       {content}
-                    </motion.div>
+                    </div>
                   ) : (
                     <div className="text-xs p-3 text-center" style={{ background: 'var(--bg-input)', color: 'var(--text-muted)' }}>
                       No message generated yet. Click Regenerate to create one.

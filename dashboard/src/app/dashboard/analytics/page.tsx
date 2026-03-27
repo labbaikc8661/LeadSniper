@@ -21,6 +21,12 @@ const tooltipStyle = {
   borderRadius: '0.75rem',
   fontSize: '0.75rem',
   color: 'var(--text-primary)',
+  boxShadow: 'none',
+};
+
+const tooltipWrapperStyle = {
+  outline: 'none',
+  boxShadow: 'none',
 };
 
 export default function AnalyticsPage() {
@@ -224,7 +230,7 @@ export default function AnalyticsPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
                 <XAxis type="number" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} unit="%" />
                 <YAxis type="category" dataKey="niche" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} width={90} />
-                <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                <Tooltip contentStyle={tooltipStyle} wrapperStyle={tooltipWrapperStyle} cursor={false} />
                 <Bar dataKey="responseRate" name="Response %" fill="var(--accent-green)" radius={[0, 6, 6, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -246,7 +252,7 @@ export default function AnalyticsPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
                 <XAxis dataKey="city" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} axisLine={false} tickLine={false} angle={-20} textAnchor="end" height={50} />
                 <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                <Tooltip contentStyle={tooltipStyle} wrapperStyle={tooltipWrapperStyle} cursor={false} />
                 <Bar dataKey="total" name="Total" fill="var(--accent-blue)" radius={[6, 6, 0, 0]} />
                 <Bar dataKey="replied" name="Replied" fill="var(--accent-green)" radius={[6, 6, 0, 0]} />
               </BarChart>
@@ -301,7 +307,7 @@ export default function AnalyticsPage() {
                   <Cell key={i} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+              <Tooltip contentStyle={tooltipStyle} wrapperStyle={tooltipWrapperStyle} cursor={false} />
             </PieChart>
           </ResponsiveContainer>
           <div className="flex flex-wrap gap-2 justify-center mt-2">
@@ -340,7 +346,7 @@ export default function AnalyticsPage() {
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
               <XAxis dataKey="name" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} axisLine={false} tickLine={false} angle={-20} textAnchor="end" height={50} />
               <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+              <Tooltip contentStyle={tooltipStyle} wrapperStyle={tooltipWrapperStyle} cursor={false} />
               <Bar dataKey="count" fill="var(--accent-amber)" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
