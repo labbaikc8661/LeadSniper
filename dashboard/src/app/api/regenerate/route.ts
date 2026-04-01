@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.85, maxOutputTokens: 1024, topP: 0.9 },
+        generationConfig: { temperature: 0.85, maxOutputTokens: 4096, topP: 0.9 },
       }),
       signal: AbortSignal.timeout(30000),
     });
